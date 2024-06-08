@@ -15,6 +15,8 @@ Commands:
 - `[` - If the value at the current position is zero, jump to the matching `]`
 - `]` - If the value at the current position is not zero, jump back to the matching `[`
 
+The interpeter also allows the `!` command to print the current state of the interpeter.
+
 # Usage
 
 To run the interpreter, just run `brainfuck` in the terminal followed by the file you want to run.
