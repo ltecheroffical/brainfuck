@@ -22,14 +22,16 @@ void state_print(const BrainfuckState *state) {
 
     int pointer_index = state->ptr - state->memory;
     fprintf(stderr, "Current index: \t\t%d\n", pointer_index);
+    
+    if (state->ptr < state->memory || state->ptr > state->memory + MEMORY_SIZE - 1) {
+        fprintf(stderr, "(Current index out of bounds)\n");
+    }
 
     for (int i = 0; i < MEMORY_SIZE; i++) {
-        if (state->memory[i] != 0) {
-            if (i == pointer_index) {
-                fprintf(stderr, "> Index %d:\t\t%d\n", i, state->memory[i]);
-            } else {
-                fprintf(stderr, "  Index %d:\t\t%d\n", i, state->memory[i]);
-            }
+        if (i == pointer_index) {
+            fprintf(stderr, "> Index %d:\t\t%d\n", i, state->memory[i]);
+        } else if (state->memory[i] != 0) {
+            fprintf(stderr, "  Index %d:\t\t%d\n", i, state->memory[i]);
         }
     }
     fprintf(stderr, "** END DEBUG PRINT **\n");

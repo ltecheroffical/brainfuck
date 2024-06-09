@@ -17,7 +17,7 @@ const char DEBUG_HELP_MESSAGE[] = "DEBUGGER HELP\n"
                                   "s\tPrint the state of the memory\n"
                                   "d\tDisable the debugger\n"
                                   "c\tStep to the next instruction\n"
-                                  "l\tPrint the instruction stream\n";
+                                  "i\tPrint the instruction stream\n";
 
 
 void process_instruction(BrainfuckState *state, char c, LoopStack *loop_stack, FILE *fp) {
@@ -124,39 +124,56 @@ int main(int argc, char *argv[]) {
     LoopStack *loop_stack = stack_init();
 
     char c;
+   
+    int continue_count = 0;
+    bool continue_count_in_progress = true;
+
     while ((c = fgetc(fp)) != EOF) {
         if (state->debugger_enabled) {
-            bool debugger_continue = false;
-            while (!debugger_continue) {
+            while (continue_count <= 0 || continue_count_in_progress) {
                 fprintf(stderr, "(BrainDbg) ");
                 char input = getchar();
 
                 switch (input) {
                     case 'h':
                         fprintf(stderr, DEBUG_HELP_MESSAGE);
+                        continue_count_in_progress = false;
                         break;
                     case 'q':
                         fprintf(stderr, "[Terminated]\n");
                         fclose(fp);
+                        continue_count_in_progress = false;
                         return 0;
                     case 's':
                         state_print(state);
+                        continue_count_in_progress = false;
                         break;
                     case 'd':
                         state->debugger_enabled = false;
-                        debugger_continue = true;
+                        continue_count++;
+                        continue_count_in_progress = false;
                         break;
                     case 'c':
-                        debugger_continue = true;
+                        continue_count_in_progress = true;
                         break;
-                    case 'l':
+                    case 'i':
                         fprintf(stderr, "PROGRAM INSTRUCTION STREAM\n");
-                        print_instruction_stream(fp); 
+                        print_instruction_stream(fp);
+                        continue_count_in_progress = false;
                         break;
                     default:
+                        if (continue_count_in_progress && input >= '0' && input <= '9') {
+                            // add this digit to the continue count
+                            continue_count = continue_count * 10 + (input - '0');
+                        } else if (continue_count_in_progress) {
+                            continue_count_in_progress = false;
+                        }
                         break;
                 }
                 fprintf(stderr, "\n");
+            }
+            if (continue_count > 0) {
+                continue_count--;
             }
         }
         process_instruction(state, c, loop_stack, fp);

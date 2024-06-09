@@ -28,8 +28,8 @@ Debugging has a few commands:
 - `q` - Quit the interpreter
 - `s` - Print the state of the interpreter
 - `d` - Detach the debugger
-- `c` - Step to the next instruction
-- `l` - Print the instruction stream
+- `c[num]` - Step to the next instruction
+- `i` - Print the instruction stream
 
 This interpreter also has some safety for out of bounds accesses.
 Security can be disabled with `--no-index-protection` (may cause undefined behavior)

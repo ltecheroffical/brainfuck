@@ -1,4 +1,6 @@
 build/
 
+.cache/
+
 build_project.sh
 run_project.sh
